@@ -16,7 +16,8 @@ class ProfileViewmodel(private val usersDao: UsersDao,val ctx: Context) : ViewMo
     }
     fun update(user: UsersEntity) {
         viewModelScope.launch {
-            usersDao.update(user)
+            usersDao.edit(id = user.id, name = user.fullName, phone = user.phoneNumber, job = user.jobTitle, bioTitle = user.bio)
+           // usersDao.update(user)
         }
     }
     fun delete(user: UsersEntity) {

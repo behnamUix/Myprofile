@@ -68,7 +68,7 @@ fun ProfileRow(
             Row {
                 TextButton(
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
+                        contentColor = MaterialTheme.colorScheme.error
                     ),
                     modifier = Modifier.weight(1f),
                     onClick = { onDelete() }

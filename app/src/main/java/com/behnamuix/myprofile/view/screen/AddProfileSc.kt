@@ -78,7 +78,6 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
         var userImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
         var textfieldErr by remember { mutableStateOf(false) }
         val viewModel = ProfileViewmodel(userDao,ctx)
-
         val maxLength = 50
         val pickMedia = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia()
@@ -411,7 +410,7 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
                                 try {
                                     viewModel.update(
                                         UsersEntity(
-                                            id = users.id,   // این مهمه
+                                            id = users.id,
                                             fullName = userFullName,
                                             phoneNumber = userPhoneNumber,
                                             jobTitle = userJob,

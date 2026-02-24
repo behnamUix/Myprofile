@@ -90,7 +90,6 @@ class MainActivity : ComponentActivity() {
                         users = users,
                         onDeleteUser = {
                             viewModel.delete(it)
-
                             viewModel.viewModelScope.launch {
                                 refreshContacts()
 

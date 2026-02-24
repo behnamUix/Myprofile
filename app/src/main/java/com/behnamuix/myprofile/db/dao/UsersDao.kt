@@ -19,8 +19,23 @@ interface UsersDao {
     @Delete
     suspend fun delete(user: UsersEntity)
 
-    @Query(" UPDATE users SET fullName = :name, phoneNumber = :phone, jobTitle = :job, bio = :bioTitle ")
-   suspend fun edit(name:String,phone:String,job:String,bioTitle:String)
+    @Query(
+        """
+UPDATE users 
+SET fullName = :name, 
+    phoneNumber = :phone, 
+    jobTitle = :job, 
+    bio = :bioTitle 
+WHERE id = :id
+"""
+    )
+    suspend fun edit(
+        id: Int,
+        name: String,
+        phone: String,
+        job: String,
+        bioTitle: String
+    )
 
     @Update
     suspend fun update(user: UsersEntity)
