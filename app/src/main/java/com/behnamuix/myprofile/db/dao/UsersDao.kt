@@ -20,10 +20,10 @@ interface UsersDao {
     suspend fun delete(user: UsersEntity)
 
     @Query(" UPDATE users SET fullName = :name, phoneNumber = :phone, jobTitle = :job, bio = :bioTitle ")
-    fun edit(name:String,phone:String,job:String,bioTitle:String)
+   suspend fun edit(name:String,phone:String,job:String,bioTitle:String)
 
     @Update
-    fun update(user: UsersEntity)
+    suspend fun update(user: UsersEntity)
 
 
 }

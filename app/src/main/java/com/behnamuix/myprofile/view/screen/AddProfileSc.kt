@@ -77,8 +77,7 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
         var userBio by rememberSaveable { mutableStateOf("") }
         var userImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
         var textfieldErr by remember { mutableStateOf(false) }
-        val coroutineScope = rememberCoroutineScope()
-        val viewModel = ProfileViewmodel(userDao)
+        val viewModel = ProfileViewmodel(userDao,ctx)
 
         val maxLength = 50
         val pickMedia = rememberLauncherForActivityResult(
@@ -318,7 +317,7 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
         var userBio by rememberSaveable { mutableStateOf(users.bio) }
         var textfieldErr by remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
-        var viewModel = ProfileViewmodel(userDao)
+        var viewModel = ProfileViewmodel(userDao,ctx)
         val maxLength = 50
         Scaffold(
 
@@ -409,22 +408,24 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
                         Toast.makeText(ctx, userFullName, Toast.LENGTH_SHORT).show()
 
                             textfieldErr = false
-                            coroutineScope.launch {
                                 try {
                                     viewModel.update(
                                         UsersEntity(
+                                            id = users.id,   // این مهمه
                                             fullName = userFullName,
                                             phoneNumber = userPhoneNumber,
                                             jobTitle = userJob,
                                             bio = userBio,
                                         )
                                     )
+                                    Toast.makeText(ctx, "پروفایل بروزرسانی شد", Toast.LENGTH_SHORT).show()
+                                    nav.pop()
 
 
                                 } catch (e: Exception) {
                                     Log.e("DB_ERROR", "edit failed", e)
                                 }
-                            }
+
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

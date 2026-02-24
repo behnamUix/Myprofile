@@ -1,6 +1,7 @@
 package com.behnamuix.myprofile
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -53,14 +55,11 @@ class MainActivity : ComponentActivity() {
         @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         override fun Content() {
-
             val nav = LocalNavigator.currentOrThrow
             val appContext = LocalContext.current
             val userDao = remember { DatabaseProvider.getUserDao(appContext) }
-            val coroutineScope = rememberCoroutineScope()
-
             val users = remember { mutableStateListOf<UsersEntity>() }
-            val viewModel = ProfileViewmodel(userDao)
+            val viewModel = ProfileViewmodel(userDao, ctx = LocalContext.current)
             suspend fun refreshContacts() {
                 users.clear()
                 users.addAll(userDao.getAll())
@@ -70,9 +69,9 @@ class MainActivity : ComponentActivity() {
             }
             Scaffold(topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("Profile") })
+                    title = { Text("profiles") })
             }, floatingActionButton = {
-                FloatingActionButton(
+                ExtendedFloatingActionButton (
                     onClick = {
                         nav.push(AddProfileSc(userDao, users))
                     }) {
@@ -91,6 +90,7 @@ class MainActivity : ComponentActivity() {
                         users = users,
                         onDeleteUser = {
                             viewModel.delete(it)
+
                             viewModel.viewModelScope.launch {
                                 refreshContacts()
 
