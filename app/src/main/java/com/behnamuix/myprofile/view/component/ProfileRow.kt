@@ -46,7 +46,6 @@ fun ProfileRow(
 
     Card(
         modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary),
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Column(Modifier.fillMaxWidth()) {
@@ -65,7 +64,7 @@ fun ProfileRow(
                         .clip(RoundedCornerShape(8.dp))
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(user.fullName, style = MaterialTheme.typography.headlineSmall)
+                    Text(user.fullName, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onBackground)
                     ProfileInfoRow(R.drawable.icon_phone,"phone: "+user.phoneNumber)
                     ProfileInfoRow(R.drawable.icon_job,"job: "+user.jobTitle)
                     ProfileInfoRow(R.drawable.icon_bio,"bio: "+user.bio)
@@ -78,7 +77,7 @@ fun ProfileRow(
             Row {
                 TextButton(
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
+                        contentColor = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier.weight(1f),
                     onClick = { onDelete() }
@@ -87,7 +86,9 @@ fun ProfileRow(
                 }
                 TextButton(modifier = Modifier.weight(1f), onClick = {
                     nav.push(EditProfileSc(user,userDao))
-                }) { Text("edit") }
+                }, colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                )) { Text("edit") }
             }
 
 

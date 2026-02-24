@@ -4,10 +4,18 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -78,7 +87,7 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
         var userBio by rememberSaveable { mutableStateOf("") }
         var userImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
         var textfieldErr by remember { mutableStateOf(false) }
-        val viewModel = ProfileViewmodel(userDao,ctx)
+        val viewModel = ProfileViewmodel(userDao, ctx)
         val maxLength = 50
         val pickMedia = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia()
@@ -119,6 +128,7 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
                     modifier = Modifier
                         .size(250.dp)
                         .clip(CircleShape)
+                        .border(4.dp, Color.Black, shape = CircleShape)
                         .background(
                             brush = Brush.verticalGradient(
                                 listOf(
@@ -143,6 +153,7 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
                             contentAlignment = Alignment.BottomCenter
                         ) {
                             IconButton(
+
                                 onClick = {
                                     pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                                 }
@@ -164,18 +175,7 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
                                 .background(Color.Black.copy(alpha = 0.5f)),
                             contentAlignment = Alignment.BottomCenter
                         ) {
-                            IconButton(
-                                onClick = {
-                                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                                }
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.icon_camera),
-                                    contentDescription = "Select Photo",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(56.dp)
-                                )
-                            }
+                            InfiniteTransformCameraIcon(pickMedia)
                         }
 
                     }
@@ -318,7 +318,7 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
         var userBio by rememberSaveable { mutableStateOf(users.bio) }
         var textfieldErr by remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
-        var viewModel = ProfileViewmodel(userDao,ctx)
+        var viewModel = ProfileViewmodel(userDao, ctx)
         val maxLength = 50
         Scaffold(
 
@@ -408,24 +408,24 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
                     onClick = {
                         Toast.makeText(ctx, userFullName, Toast.LENGTH_SHORT).show()
 
-                            textfieldErr = false
-                                try {
-                                    viewModel.update(
-                                        UsersEntity(
-                                            id = users.id,
-                                            fullName = userFullName,
-                                            phoneNumber = userPhoneNumber,
-                                            jobTitle = userJob,
-                                            bio = userBio,
-                                        )
-                                    )
-                                    Toast.makeText(ctx, "پروفایل بروزرسانی شد", Toast.LENGTH_SHORT).show()
-                                    nav.pop()
+                        textfieldErr = false
+                        try {
+                            viewModel.update(
+                                UsersEntity(
+                                    id = users.id,
+                                    fullName = userFullName,
+                                    phoneNumber = userPhoneNumber,
+                                    jobTitle = userJob,
+                                    bio = userBio,
+                                )
+                            )
+                            Toast.makeText(ctx, "پروفایل بروزرسانی شد", Toast.LENGTH_SHORT).show()
+                            nav.pop()
 
 
-                                } catch (e: Exception) {
-                                    Log.e("DB_ERROR", "edit failed", e)
-                                }
+                        } catch (e: Exception) {
+                            Log.e("DB_ERROR", "edit failed", e)
+                        }
 
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -435,6 +435,37 @@ data class EditProfileSc(val users: UsersEntity, val userDao: UsersDao) : Screen
             }
         }
 
+    }
+
+}
+
+@Composable
+fun InfiniteTransformCameraIcon(pickMedia: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+
+    val transform by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = -8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "move box to up and down"
+    )
+    IconButton(
+        modifier = Modifier.offset(x = 0.dp, y = transform.dp),
+        onClick = {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.icon_camera),
+            contentDescription = "Select Photo",
+            tint = Color.White,
+            modifier = Modifier
+                .size(56.dp)
+
+        )
     }
 
 }
