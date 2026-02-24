@@ -1,7 +1,8 @@
-package com.behnamuix.myprofile.db
+package com.behnamuix.myprofile.db.config
 
 import android.content.Context
 import androidx.room.Room
+import com.behnamuix.myprofile.db.AppDatabase
 import com.behnamuix.myprofile.db.dao.UsersDao
 
 object DatabaseProvider {

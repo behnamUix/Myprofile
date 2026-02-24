@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -119,9 +120,9 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
                         .size(250.dp)
                         .clip(CircleShape)
                         .background(
-                            brush = Brush.linearGradient(
+                            brush = Brush.verticalGradient(
                                 listOf(
-                                    MaterialTheme.colorScheme.background,
+                                    MaterialTheme.colorScheme.secondary,
                                     MaterialTheme.colorScheme.primary
                                 )
                             )
@@ -242,10 +243,11 @@ data class AddProfileSc(val userDao: UsersDao, val users: SnapshotStateList<User
                 Spacer(Modifier.weight(1f))
 
                 Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
                         if (userFullName.isEmpty() && userJob.isEmpty()) {
-                            Toast.makeText(ctx, "please filled textfield!", Toast.LENGTH_SHORT)
+                            Toast.makeText(ctx, "حداقل دو فیلد را پر کنید!", Toast.LENGTH_SHORT)
                                 .show()
                             textfieldErr = true
                         } else {
